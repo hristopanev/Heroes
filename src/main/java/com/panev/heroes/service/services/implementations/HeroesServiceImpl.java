@@ -4,6 +4,7 @@ import com.panev.heroes.data.models.Hero;
 import com.panev.heroes.data.models.Item;
 import com.panev.heroes.data.models.Slot;
 import com.panev.heroes.data.repositrories.HeroesRepository;
+import com.panev.heroes.errors.HeroNotFoundException;
 import com.panev.heroes.service.factories.HeroesFactory;
 import com.panev.heroes.service.models.HeroCreateServiceModel;
 import com.panev.heroes.service.models.HeroDetailsServiceModel;
@@ -29,12 +30,7 @@ public class HeroesServiceImpl implements HeroesService {
 
     @Override
     public HeroDetailsServiceModel getByName(String name) {
-        Optional<Hero> heroOptional = heroesRepository.getByNameIgnoreCase(name);
-        if (heroOptional.isEmpty()) {
-            throw new NullPointerException("No such hero");
-        }
-
-        Hero hero = heroOptional.get();
+        Hero hero = heroesRepository.getByNameIgnoreCase(name).orElseThrow(() -> new HeroNotFoundException("No Hero"));
 
         HeroDetailsServiceModel serviceModel = mapper.map(hero, HeroDetailsServiceModel.class);
 
