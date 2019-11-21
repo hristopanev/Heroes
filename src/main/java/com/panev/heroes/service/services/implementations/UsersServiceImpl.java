@@ -6,12 +6,12 @@ import com.panev.heroes.data.repositrories.HeroesRepository;
 import com.panev.heroes.data.repositrories.UsersRepository;
 import com.panev.heroes.service.models.HeroCreateServiceModel;
 import com.panev.heroes.service.services.HeroesService;
-import com.panev.heroes.service.services.UserService;
+import com.panev.heroes.service.services.UsersService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UsersServiceImpl implements UserService {
+public class UsersServiceImpl implements UsersService {
 
     private final HeroesService heroesService;
     private final UsersRepository usersRepository;

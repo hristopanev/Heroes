@@ -7,24 +7,29 @@ import com.panev.heroes.web.models.RegisterUserModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
 public class AuthController {
+//            session.setAttribute("username", serviceModel.getUsername());
 
     private final AuthService authService;
-    private final ModelMapper modelMapper;
+    private final ModelMapper mapper;
 
-    @Autowired
-    public AuthController(AuthService authService, ModelMapper modelMapper) {
+    public AuthController(
+            AuthService authService,
+            ModelMapper mapper) {
         this.authService = authService;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
     }
 
     @GetMapping("/login")
@@ -32,30 +37,32 @@ public class AuthController {
         return "auth/login.html";
     }
 
-    @PostMapping("/login")
-    public String loginUser(@ModelAttribute RegisterUserModel model, HttpSession session) {
-        RegisterUserServiceModel serviceModel = modelMapper.map(model, RegisterUserServiceModel.class);
-
-        try {
-            LoginUserServiceModel loginUserServiceModel = authService.login(serviceModel);
-            session.setAttribute("user", loginUserServiceModel);
-//            session.setAttribute("username", serviceModel.getUsername());
-            return "redirect:/";
-        } catch (Exception ex) {
-            return "redirect:/users/login";
-        }
-    }
-
     @GetMapping("/register")
-    public String getRegisterForm() {
-
+    public String getRegisterForm(Model model) {
+        model.addAttribute("model", new RegisterUserModel());
         return "auth/register.html";
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute RegisterUserModel model) {
-        RegisterUserServiceModel serviceModel = modelMapper.map(model, RegisterUserServiceModel.class);
+    public String register(@Valid @ModelAttribute RegisterUserModel model, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "auth/register.html";
+        }
+        RegisterUserServiceModel serviceModel = mapper.map(model, RegisterUserServiceModel.class);
         authService.register(serviceModel);
         return "redirect:/";
+    }
+
+
+    @PostMapping("/login")
+    public String login(@ModelAttribute RegisterUserModel model, HttpSession session) {
+        RegisterUserServiceModel serviceModel = mapper.map(model, RegisterUserServiceModel.class);
+        try {
+            LoginUserServiceModel loginUserServiceModel = authService.login(serviceModel);
+            session.setAttribute("user", loginUserServiceModel);
+            return "redirect:/";
+        } catch (Exception ex) {
+            return "redirect:/users/login";
+        }
     }
 }
