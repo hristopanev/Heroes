@@ -52,7 +52,7 @@ public class AuthController {
         authService.register(serviceModel);
         return "redirect:/";
     }
-    
+
     @PostMapping("/login")
     public String login(@ModelAttribute RegisterUserModel model, HttpSession session) {
         RegisterUserServiceModel serviceModel = mapper.map(model, RegisterUserServiceModel.class);
@@ -64,4 +64,5 @@ public class AuthController {
             return "redirect:/users/login";
         }
     }
+    
 }
