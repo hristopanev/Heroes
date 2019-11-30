@@ -64,5 +64,5 @@ public class AuthController {
             return "redirect:/users/login";
         }
     }
-    
+
 }

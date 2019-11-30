@@ -40,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
         usersRepository.save(user);
     }
 
+
     @Override
     public LoginUserServiceModel login(RegisterUserServiceModel serviceModel) throws Exception {
         String passwordHash = hashingService.hash(serviceModel.getPassword());
